@@ -99,7 +99,8 @@ class RowColumnTranspositionCipher(object):
      
      
     def decrypt(self, cipher):
-        """
+        """This method is used to decrypt the ciphertext into plaintext message. 
+        
         Pseudocode:
         1) Construct the empty transpose matrix with size [n, m].
         2) Compute the key order and swapping list. 
@@ -107,6 +108,12 @@ class RowColumnTranspositionCipher(object):
             transpose the matrix to get the decipher matrix.
         4) Perform ERO where two rows are swapped based on the swapping list in reverse order.
         5) Read the plaintext starting from the first to the last row of the matrix.
+
+        Args:
+            cipher (_str_): the ciphertext to be decrypted
+
+        Returns:
+            _str_: the decrypted message
         """
         message = ""
         
