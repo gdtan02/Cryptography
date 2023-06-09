@@ -61,12 +61,11 @@ class HillCipher(object):
             _np_matrix_: the inverse of the key matrix
         """
         det_key = np.linalg.det(key_matrix).round().astype(int)
-        print(np.linalg.inv(key_matrix))
-        adj = np.round(np.linalg.inv(key_matrix) * np.linalg.det(key_matrix)).astype(int) % 26
-        
-        det_mi = self.get_modular_inverse(int(det_key), 26)
+        adj = np.round(np.linalg.inv(key_matrix) * np.linalg.det(key_matrix)).astype(int) % 27
+        det_mi = self.get_modular_inverse(int(det_key), 27)
 
         inverse_matrix = (det_mi * adj).round().astype(int)
+        print("Inverse matrix:", inverse_matrix % 27)
 
         return inverse_matrix
         
@@ -75,7 +74,9 @@ class HillCipher(object):
     
     def encrypt(self, message):  
         """
-        The method used to encrypt the message into ciphertext. 
+        The method used to encrypt the message into ciphertext.
+        
+        Limitation: The message should contain only alphabets (A-Z) or (a-z).
         
         Pseudocode:
         1) Takes the message to be encrypted as argument, clean the message by removing the padding.
@@ -129,7 +130,7 @@ class HillCipher(object):
         
         # Compute the cipher vector by multiplying the message vector with key generated.
         # C(P, K) = P * K mod 26, where C = cipher vector, P = message vector, K = key matrix
-        cipher_vector = np.dot(message_vector, self.key_matrix) % 26
+        cipher_vector = np.dot(message_vector, self.key_matrix) % 27
         cipher_vector = cipher_vector.astype(np.int64)
         
         print("Cipher vector:\n", cipher_vector)
@@ -140,17 +141,15 @@ class HillCipher(object):
         for r in range(rows):
             row = []
             for c in range(cols):
-                    row.append(chr(cipher_vector[r][c] + 65)) 
+                    if(cipher_vector[r][c] == 26):
+                        row.append('_')
+                    else:
+                        row.append(chr(cipher_vector[r][c] + 65)) 
             cipher_list.append(row)
         
         print("Cipher list:", cipher_list)
         for r in range(rows):
             ciphertext += ''.join(cipher_list[r])
-            
-        # Add the padding back to the end of ciphertext
-        if(padding_count > 0):
-            ciphertext = ciphertext[:-padding_count]
-            ciphertext += ('_' * padding_count)
             
         return ciphertext
     
@@ -205,7 +204,7 @@ class HillCipher(object):
         
         # Decrypt the message by multiplying the cipher vector with the inverse of key matrix
         plaintext_vector = np.dot(cipher_vector, inverse_key)
-        plaintext_vector = np.round(plaintext_vector) % 26
+        plaintext_vector = np.round(plaintext_vector) % 27
         plaintext_vector = plaintext_vector.astype(np.int64)
         
         print("Plaintext vector:\n", plaintext_vector)
@@ -216,7 +215,10 @@ class HillCipher(object):
         for r in range(rows):
             row = []
             for c in range(cols):
-                row.append(chr(plaintext_vector[r][c] + 65)) 
+                if(plaintext_vector[r][c] == 26):
+                    row.append('')
+                else:
+                    row.append(chr(plaintext_vector[r][c] + 65)) 
             plaintext_list.append(row)
         
         # Remove the padding of the character
@@ -234,7 +236,7 @@ class HillCipher(object):
     
 
         
-message = "I love Computing Math!!!"
+message = "I love Computing Mathematics"
 r = HillCipher(int(input("Enter the block size of the key: ")))
 
 print("Original message:", message)

@@ -175,13 +175,12 @@ class RowColumnTranspositionCipher(object):
     
     
         
-message = "Kill corona virus at twelve am tomorrow"
+message = "I Love Computing Math"
 key = "PATTERN"
 r = RowColumnTranspositionCipher(key)
 ciphertext = r.encrypt(message)
 
 print(ciphertext)
-ciphertext = 'owuirm va _oi  o_ortrKravetc_mneslo al lwt'
 
 plaintext = r.decrypt(ciphertext)
 print(plaintext)
